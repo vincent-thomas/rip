@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2024"
 description = "A recursive line searcher built on lio (io_uring)"
 license = "MIT"
+repository = "https://github.com/vincent-thomas/rip"
+# The oldest Rust that builds it (the `ignore` crate needs 1.88).
+rust-version = "1.88"
 
 [dependencies]
 # Pinned to the lio commit lrg was built and measured against.
