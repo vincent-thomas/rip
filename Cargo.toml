@@ -1,0 +1,29 @@
+[package]
+name = "lrg"
+version = "0.1.0"
+edition = "2024"
+description = "A recursive line searcher built on lio (io_uring)"
+license = "MIT"
+
+[dependencies]
+# Pinned to the lio commit lrg was built and measured against.
+lio = { git = "https://github.com/vincent-thomas/lio", rev = "d2cbdb4924c9da26845d035bc1dccb81552ecbeb" }
+regex = "1.12"
+memchr = "2.7"
+crossbeam-deque = "0.8"
+ignore = "0.4"
+mimalloc = { version = "0.1", default-features = false }
+# Profiling only: without the `hotpath` feature its macros do nothing.
+hotpath = { version = "0.33", default-features = false }
+
+[features]
+hotpath = ["hotpath/hotpath"]
+
+[[bin]]
+name = "lrg"
+path = "src/main.rs"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+panic = "abort"
