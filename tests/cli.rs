@@ -226,10 +226,12 @@ fn headings_and_colors() {
   let out =
     t.run(&["--heading", "-n", "--color", "never", "needle", "a.txt", "b.txt"]);
   let s = String::from_utf8(out.stdout).unwrap();
-  // Two groups separated by one blank line, in either order.
-  let mut groups: Vec<&str> = s.split("\n\n").collect();
+  // Two groups separated by one blank line, in either order. The output
+  // ends with one newline, after whichever group came last.
+  assert!(s.ends_with('\n') && !s.ends_with("\n\n"));
+  let mut groups: Vec<&str> = s.trim_end().split("\n\n").collect();
   groups.sort();
-  assert_eq!(groups, ["a.txt\n1:x needle y", "b.txt\n1:needle\n"]);
+  assert_eq!(groups, ["a.txt\n1:x needle y", "b.txt\n1:needle"]);
 
   let out = t.run(&["--color", "always", "needle", "a.txt"]);
   assert_eq!(
