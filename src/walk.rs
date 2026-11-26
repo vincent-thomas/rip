@@ -1,8 +1,11 @@
 //! Work items, and turning a directory listing into work for its children.
 
+#[cfg(unix)]
+use std::os::unix::ffi::OsStrExt;
+#[cfg(target_os = "wasi")]
+use std::os::wasi::ffi::OsStrExt;
 use std::{
   ffi::{CString, OsStr},
-  os::unix::ffi::OsStrExt,
   sync::Arc,
 };
 

@@ -15,9 +15,12 @@ regex = "1.12"
 memchr = "2.7"
 crossbeam-deque = "0.8"
 ignore = "0.4"
-mimalloc = { version = "0.1", default-features = false }
 # Profiling only: without the `hotpath` feature its macros do nothing.
 hotpath = { version = "0.33", default-features = false }
+
+# mimalloc is C code; WASI builds use the default allocator.
+[target.'cfg(not(target_os = "wasi"))'.dependencies]
+mimalloc = { version = "0.1", default-features = false }
 
 [features]
 hotpath = ["hotpath/hotpath"]

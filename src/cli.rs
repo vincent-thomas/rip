@@ -1,11 +1,15 @@
 //! Command-line arguments and the search configuration.
 
+#[cfg(unix)]
+use std::os::unix::ffi::OsStrExt;
+#[cfg(target_os = "wasi")]
+use std::os::wasi::ffi::OsStrExt;
 use std::{
   ffi::OsStr,
   io::{self, IsTerminal},
-  os::unix::ffi::OsStrExt,
 };
 
+use crate::sched::THREADS;
 use regex::bytes::{Regex, RegexBuilder};
 
 /// Default number of operations one worker keeps in flight while data comes
@@ -88,6 +92,9 @@ pub(crate) fn parse_args() -> Result<(Config, Vec<Vec<u8>>), String> {
   let mut with_filename: Option<bool> = None;
   let (mut hidden, mut no_ignore, mut text) = (false, false, false);
   let mut threads = std::thread::available_parallelism().map_or(4, |n| n.get());
+  if !THREADS {
+    threads = 1;
+  }
   let mut depth = DEFAULT_DEPTH;
   let mut listers: Option<usize> = None;
 
@@ -256,7 +263,8 @@ pub(crate) fn parse_args() -> Result<(Config, Vec<Vec<u8>>), String> {
     hidden,
     no_ignore,
     text,
-    threads: threads.max(1),
+    // Without threads, `-j` has no effect.
+    threads: if THREADS { threads.max(1) } else { 1 },
     depth: depth.max(1),
     listers: listers.unwrap_or(4 * threads).max(1),
   };

@@ -1,6 +1,10 @@
 //! Ignore rules: `.gitignore`, `.ignore` and `.rgignore` files.
 
-use std::{ffi::OsStr, os::unix::ffi::OsStrExt, path::Path, sync::Arc};
+#[cfg(unix)]
+use std::os::unix::ffi::OsStrExt;
+#[cfg(target_os = "wasi")]
+use std::os::wasi::ffi::OsStrExt;
+use std::{ffi::OsStr, path::Path, sync::Arc};
 
 use ignore::{
   Match,

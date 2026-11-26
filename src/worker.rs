@@ -18,7 +18,7 @@ use regex::bytes::Regex;
 use crate::{
   bigfile::{BigFile, MAX_RANGES, RANGE, RANGE_SLACK, RangeResult},
   output::{OUT_FLUSH, finish, flush},
-  sched::Shared,
+  sched::{Shared, THREADS},
   search::{SearchState, search_lines},
   walk::{DirWork, Work, children},
 };
@@ -249,7 +249,9 @@ impl WorkerThread<'_> {
 
   pub(crate) fn handle(&mut self, ev: Ev) {
     match ev {
-      Ev::DirOpen(id, Ok(fd)) if self.depth > self.shared.cfg.depth => {
+      Ev::DirOpen(id, Ok(fd))
+        if THREADS && self.depth > self.shared.cfg.depth =>
+      {
         // This thread waits on the disk, so listing may block too: hand the
         // directory to a lister thread and keep the ring running.
         let Slot::Dir { work, .. } = self.take(id) else {

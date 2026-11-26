@@ -34,3 +34,20 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.88
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
+
+  wasi:
+    # Builds for WASI 0.3 (`wasm32-wasip3`): one thread, lio's WASI backend.
+    # The pinned Rust is the one lio's WASI backend is built with.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.100.0
+          targets: wasm32-wasip3
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Lint
+        run: cargo clippy --release --target wasm32-wasip3 -- -D warnings
+      - name: Build
+        run: cargo build --release --target wasm32-wasip3
