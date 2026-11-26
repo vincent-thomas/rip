@@ -10,7 +10,7 @@ rust-version = "1.88"
 
 [dependencies]
 # Pinned to the lio commit lrg was built and measured against.
-lio = { git = "https://github.com/vincent-thomas/lio", rev = "046976fcbb73abc7608c4d6b25e50599668d99e7" }
+lio = { git = "https://github.com/vincent-thomas/lio", rev = "f00b82dd8ee925f93d6db91b721fe781ae7c4eb2" }
 regex = "1.12"
 memchr = "2.7"
 crossbeam-deque = "0.8"
