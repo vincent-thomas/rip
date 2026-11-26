@@ -36,10 +36,13 @@ mod search;
 mod walk;
 mod worker;
 
+#[cfg(unix)]
+use std::os::unix::ffi::OsStrExt;
+#[cfg(target_os = "wasi")]
+use std::os::wasi::ffi::OsStrExt;
 use std::{
   cell::RefCell,
   ffi::{CString, OsStr},
-  os::unix::ffi::OsStrExt,
   path::Path,
   process::ExitCode,
   rc::Rc,
@@ -55,13 +58,14 @@ use crate::{
   lister::Lister,
   output::{HEADING, OUT_FLUSH},
   rules::parent_in_git,
-  sched::{Parker, Shared},
+  sched::{Parker, Shared, THREADS},
   walk::{DirWork, FileWork, Work},
   worker::{DEPTH_GROWTH, WorkerThread},
 };
 
 // Work items are allocated by one thread and often freed by another. glibc's
 // allocator serializes that on arena locks; mimalloc does not.
+#[cfg(not(target_os = "wasi"))]
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
@@ -149,58 +153,66 @@ fn main() -> ExitCode {
     }
   };
 
-  std::thread::scope(|s| {
+  let run_worker = |local: Worker<Work>| {
+    let depth = shared.cfg.depth;
+    let lio = new_lio(depth * DEPTH_GROWTH * 2);
+    let mut t = WorkerThread {
+      shared: &shared,
+      re: shared.cfg.re.clone(),
+      local,
+      lio,
+      evq: Rc::new(RefCell::new(Vec::with_capacity(depth))),
+      slots: Vec::with_capacity(depth),
+      free: Vec::new(),
+      inflight: 0,
+      depth,
+      pool: Vec::new(),
+      range_pool: Vec::new(),
+      ranges: 0,
+      rdbufs: Vec::new(),
+      children: Vec::new(),
+      out: Vec::with_capacity(2 * OUT_FLUSH),
+    };
+    t.run();
+    // The process exits next and frees everything. Tearing down the ring
+    // and buffers here would only add a few milliseconds at the end.
+    std::mem::forget(t);
+  };
+
+  if !THREADS {
+    // One worker (`threads` is 1), on this thread.
     for local in workers {
-      let shared = &shared;
-      s.spawn(move || {
-        let depth = shared.cfg.depth;
-        let lio = new_lio(depth * DEPTH_GROWTH * 2);
-        let mut t = WorkerThread {
-          shared,
-          re: shared.cfg.re.clone(),
-          local,
-          lio,
-          evq: Rc::new(RefCell::new(Vec::with_capacity(depth))),
-          slots: Vec::with_capacity(depth),
-          free: Vec::new(),
-          inflight: 0,
-          depth,
-          pool: Vec::new(),
-          range_pool: Vec::new(),
-          ranges: 0,
-          rdbufs: Vec::new(),
-          children: Vec::new(),
-          out: Vec::with_capacity(2 * OUT_FLUSH),
-        };
-        t.run();
-        // The process exits next and frees everything. Tearing down the ring
-        // and buffers here would only add a few milliseconds at the end.
-        std::mem::forget(t);
-      });
+      run_worker(local);
     }
-    // Start the listers only once a worker waits on the disk: a search of
-    // cached data never needs them.
-    while !shared.done() && !shared.want_listers.load(Ordering::Acquire) {
-      shared.main_park.park(Duration::from_millis(50));
-    }
-    if shared.want_listers.load(Ordering::Acquire) {
-      for _ in 0..listers {
-        let shared = &shared;
-        s.spawn(move || {
-          let mut t = Lister {
-            shared,
-            lio: new_lio(4),
-            rdbuf: None,
-            names: Vec::new(),
-            entries: Vec::new(),
-            work: Vec::new(),
-          };
-          t.run();
-          std::mem::forget(t);
-        });
+  } else {
+    std::thread::scope(|s| {
+      for local in workers {
+        s.spawn(move || run_worker(local));
       }
-    }
-  });
+      // Start the listers only once a worker waits on the disk: a search of
+      // cached data never needs them.
+      while !shared.done() && !shared.want_listers.load(Ordering::Acquire) {
+        shared.main_park.park(Duration::from_millis(50));
+      }
+      if shared.want_listers.load(Ordering::Acquire) {
+        for _ in 0..listers {
+          let shared = &shared;
+          s.spawn(move || {
+            let mut t = Lister {
+              shared,
+              lio: new_lio(4),
+              rdbuf: None,
+              names: Vec::new(),
+              entries: Vec::new(),
+              work: Vec::new(),
+            };
+            t.run();
+            std::mem::forget(t);
+          });
+        }
+      }
+    });
+  }
 
   // As ripgrep: 2 after any error, else 0 on a match, else 1.
   if shared.errored.load(Ordering::Relaxed) {

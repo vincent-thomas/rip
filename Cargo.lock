@@ -346,21 +346,30 @@ dependencies = [
 [[package]]
 name = "lio"
 version = "0.4.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=f00b82dd8ee925f93d6db91b721fe781ae7c4eb2#f00b82dd8ee925f93d6db91b721fe781ae7c4eb2"
+source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
 dependencies = [
  "bumpalo",
  "libc",
  "lio-uring",
+ "lio-wasi",
  "windows-sys 0.59.0",
 ]
 
 [[package]]
 name = "lio-uring"
 version = "0.3.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=f00b82dd8ee925f93d6db91b721fe781ae7c4eb2#f00b82dd8ee925f93d6db91b721fe781ae7c4eb2"
+source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
 dependencies = [
  "bindgen",
  "libc",
+]
+
+[[package]]
+name = "lio-wasi"
+version = "0.1.0"
+source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
+dependencies = [
+ "wasip3",
 ]
 
 [[package]]
@@ -702,6 +711,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b"
 
 [[package]]
+name = "wasip3"
+version = "0.10.0+wasi-0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1657e9f48c63d6c3f143f70d5c6e2be7d463371a7af1ed939a5b83d3ca080d0"
+dependencies = [
+ "wit-bindgen",
+]
+
+[[package]]
 name = "wasm-bindgen"
 version = "0.2.130"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -873,6 +891,15 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
+
+[[package]]
+name = "wit-bindgen"
+version = "0.63.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b85a987ab61d365382d25c7d47e26edd48941b3bf6e3fbf76eff918bc71dab06"
+dependencies = [
+ "bitflags",
+]
 
 [[package]]
 name = "zmij"

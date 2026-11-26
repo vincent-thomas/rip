@@ -10,14 +10,17 @@ rust-version = "1.88"
 
 [dependencies]
 # Pinned to the lio commit lrg was built and measured against.
-lio = { git = "https://github.com/vincent-thomas/lio", rev = "f00b82dd8ee925f93d6db91b721fe781ae7c4eb2" }
+lio = { git = "https://github.com/vincent-thomas/lio", rev = "27cb13f8bb27a82047a2f520291b37dd54bf91a6" }
 regex = "1.12"
 memchr = "2.7"
 crossbeam-deque = "0.8"
 ignore = "0.4"
-mimalloc = { version = "0.1", default-features = false }
 # Profiling only: without the `hotpath` feature its macros do nothing.
 hotpath = { version = "0.33", default-features = false }
+
+# mimalloc is C code; WASI builds use the default allocator.
+[target.'cfg(not(target_os = "wasi"))'.dependencies]
+mimalloc = { version = "0.1", default-features = false }
 
 [features]
 hotpath = ["hotpath/hotpath"]

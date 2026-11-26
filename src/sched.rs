@@ -18,6 +18,10 @@ use crate::{
 };
 
 /// Lets idle threads sleep until new work arrives.
+/// Whether lrg runs on several threads. A WASI component has one thread, so
+/// there lrg runs one worker on the main thread and no lister threads.
+pub(crate) const THREADS: bool = cfg!(not(target_os = "wasi"));
+
 pub(crate) struct Parker {
   pub(crate) lock: Mutex<()>,
   pub(crate) cv: Condvar,

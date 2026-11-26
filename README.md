@@ -59,6 +59,22 @@ Where the limits are:
 - **Large single files:** ripgrep searches one file on one thread. lrg uses
   all cores.
 
+## WASI
+
+lrg also builds as a WASI 0.3 component, on lio's WASI backend:
+
+```sh
+rustup target add wasm32-wasip3 --toolchain 1.100.0
+cargo +1.100.0 build --release --target wasm32-wasip3
+wasmtime run -S p3 --dir .::/ target/wasm32-wasip3/release/lrg.wasm PATTERN
+```
+
+A WASI component has one thread. So there lrg runs one worker on the main
+thread, starts no lister threads, ignores `-j`, and does not split big files
+into ranges. It also uses the default allocator, since mimalloc is C code.
+Expect it to be much slower than on Linux, where io_uring and all cores do
+the work. CI builds it and lints it, but does not run it yet.
+
 ## Known differences from ripgrep
 
 - A NUL byte deep inside a large file: ripgrep stops at the border of its
@@ -69,7 +85,8 @@ Where the limits are:
   `-B`, `-C`), replacements, file type filters (`-t`), globs (`-g`), PCRE2,
   and multiline search.
 - A pattern that contains a NUL byte is not rejected as ripgrep does.
-- Linux only in practice: the speed comes from the io_uring backend.
+- Fast only on Linux: the speed comes from the io_uring backend. The WASI
+  build works on one thread (see [WASI](#wasi)).
 
 ## Code layout
 
@@ -122,4 +139,5 @@ HOTPATH_OUTPUT_PATH=report.txt target/release/lrg PATTERN
 ```
 
 CI (`.github/workflows/ci.yml`) checks formatting, clippy (warnings are
-errors), the tests, the hotpath build, and the build on Rust 1.88.
+errors), the tests, the hotpath build, the build on Rust 1.88, and the WASI
+build.
