@@ -346,7 +346,7 @@ dependencies = [
 [[package]]
 name = "lio"
 version = "0.4.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=d2cbdb4924c9da26845d035bc1dccb81552ecbeb#d2cbdb4924c9da26845d035bc1dccb81552ecbeb"
+source = "git+https://github.com/vincent-thomas/lio?rev=046976fcbb73abc7608c4d6b25e50599668d99e7#046976fcbb73abc7608c4d6b25e50599668d99e7"
 dependencies = [
  "bumpalo",
  "libc",
@@ -357,7 +357,7 @@ dependencies = [
 [[package]]
 name = "lio-uring"
 version = "0.3.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=d2cbdb4924c9da26845d035bc1dccb81552ecbeb#d2cbdb4924c9da26845d035bc1dccb81552ecbeb"
+source = "git+https://github.com/vincent-thomas/lio?rev=046976fcbb73abc7608c4d6b25e50599668d99e7#046976fcbb73abc7608c4d6b25e50599668d99e7"
 dependencies = [
  "bindgen",
  "libc",
