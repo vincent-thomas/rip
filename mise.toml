@@ -1,0 +1,9 @@
+[tools]
+# The Rust that lio's WASI backend is built with, plus the WASI 0.3 target.
+rust = { version = "1.100.0", profile = "minimal", components = "clippy,rustfmt", targets = "wasm32-wasip3" }
+# Runs the WASI build: wasmtime run -S p3 --dir .::/ target/wasm32-wasip3/release/lrg.wasm PATTERN
+wasmtime = "latest"
+
+[tasks.build-wasi]
+description = "Build lrg as a WASI 0.3 component: target/wasm32-wasip3/release/lrg.wasm."
+run = "cargo build --release --target wasm32-wasip3"

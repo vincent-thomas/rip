@@ -61,13 +61,25 @@ Where the limits are:
 
 ## WASI
 
-lrg also builds as a WASI 0.3 component, on lio's WASI backend:
+lrg also builds as a WASI 0.3 component, on lio's WASI backend. With
+[mise](https://mise.jdx.dev), which installs the Rust version, the target and
+wasmtime from `mise.toml`:
 
 ```sh
-rustup target add wasm32-wasip3 --toolchain 1.100.0
-cargo +1.100.0 build --release --target wasm32-wasip3
+mise install
+mise run build-wasi
 wasmtime run -S p3 --dir .::/ target/wasm32-wasip3/release/lrg.wasm PATTERN
 ```
+
+Without mise:
+
+```sh
+rustup toolchain install 1.100.0 --profile minimal --target wasm32-wasip3
+cargo +1.100.0 build --release --target wasm32-wasip3
+```
+
+`--dir .::/` gives lrg the current directory. A WASI program sees only the
+directories passed with `--dir`.
 
 A WASI component has one thread. So there lrg runs one worker on the main
 thread, starts no lister threads, ignores `-j`, and does not split big files
