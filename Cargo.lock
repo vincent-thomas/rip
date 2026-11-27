@@ -82,9 +82,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
 name = "cc"
-version = "1.11.3"
+version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
+checksum = "95e45cf2980b2d467be49a9ed942c9179b701063a7ca3d037de7ee9bd67f8d66"
 dependencies = [
  "find-msvc-tools",
  "shlex 2.0.1",
@@ -173,9 +173,9 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 
 [[package]]
 name = "find-msvc-tools"
-version = "0.1.15"
+version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+checksum = "3e44f110d1777dc6559a51e7d45083945ded4f1bf3305494350f693b6d20b9c8"
 
 [[package]]
 name = "futures-core"
@@ -346,7 +346,7 @@ dependencies = [
 [[package]]
 name = "lio"
 version = "0.4.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
+source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
 dependencies = [
  "bumpalo",
  "libc",
@@ -358,7 +358,7 @@ dependencies = [
 [[package]]
 name = "lio-uring"
 version = "0.3.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
+source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
 dependencies = [
  "bindgen",
  "libc",
@@ -367,7 +367,7 @@ dependencies = [
 [[package]]
 name = "lio-wasi"
 version = "0.1.0"
-source = "git+https://github.com/vincent-thomas/lio?rev=27cb13f8bb27a82047a2f520291b37dd54bf91a6#27cb13f8bb27a82047a2f520291b37dd54bf91a6"
+source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
 dependencies = [
  "wasip3",
 ]
