@@ -346,7 +346,7 @@ dependencies = [
 [[package]]
 name = "lio"
 version = "0.4.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
+source = "git+https://github.com/vincent-thomas/lio?rev=deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c#deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c"
 dependencies = [
  "bumpalo",
  "libc",
@@ -358,7 +358,7 @@ dependencies = [
 [[package]]
 name = "lio-uring"
 version = "0.3.1"
-source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
+source = "git+https://github.com/vincent-thomas/lio?rev=deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c#deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c"
 dependencies = [
  "bindgen",
  "libc",
@@ -367,7 +367,7 @@ dependencies = [
 [[package]]
 name = "lio-wasi"
 version = "0.1.0"
-source = "git+https://github.com/vincent-thomas/lio?rev=6e3d35d1f3d77d8c078211104c3e0827addb48d0#6e3d35d1f3d77d8c078211104c3e0827addb48d0"
+source = "git+https://github.com/vincent-thomas/lio?rev=deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c#deff8c1d7ed6c0bd52ad725f2e3d8acb44ccfb6c"
 dependencies = [
  "wasip3",
 ]

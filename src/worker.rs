@@ -471,10 +471,20 @@ impl WorkerThread<'_> {
         self.shared.park.park(Duration::from_micros(500));
         continue;
       }
-      let before = self.inflight;
+      // lio delivers a result the backend has at once during the submit
+      // itself, so some may be here already. Those are not waiting, and with
+      // them in hand the thread must not block: their follow-up operations
+      // keep the disk busy.
+      let ready = self.evq.borrow().len();
+      let waiting = self.inflight - ready;
       let t0 = Instant::now();
       // The kernel does the I/O here.
-      if let Err(e) = hotpath::measure_block!("lio_run", self.lio.run()) {
+      let ran = if ready > 0 {
+        hotpath::measure_block!("lio_run", self.lio.try_run())
+      } else {
+        hotpath::measure_block!("lio_run", self.lio.run())
+      };
+      if let Err(e) = ran {
         eprintln!("lrg: io driver: {e}");
         std::process::exit(2);
       }
@@ -484,11 +494,12 @@ impl WorkerThread<'_> {
       // small depth keeps work spread across threads. When few finish after
       // a long wait, the thread waits on the disk: more operations in flight
       // keep it busy. (A short wait is the kernel finishing a cached open on
-      // a helper thread, not the disk.)
+      // a helper thread, not the disk.) Only what the run delivered counts.
       let base = self.shared.cfg.depth;
-      if events.len() * 2 < before && waited >= DISK_WAIT {
+      let delivered = events.len() - ready;
+      if delivered * 2 < waiting && waited >= DISK_WAIT {
         self.depth = (self.depth * 2).min(base * DEPTH_GROWTH);
-      } else if events.len() >= before {
+      } else if delivered >= waiting {
         self.depth = (self.depth / 2).max(base);
       }
       for ev in events.drain(..) {
